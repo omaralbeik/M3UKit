@@ -24,7 +24,7 @@
 import Foundation
 
 /// Object representing a TV channel.
-public struct Channel: Equatable, Hashable {
+public struct Channel: Equatable, Hashable, Codable {
     /// Create a new channel object.
     /// - Parameters:
     ///   - duration: duration.

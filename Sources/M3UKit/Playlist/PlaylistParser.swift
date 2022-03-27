@@ -29,6 +29,9 @@ public final class PlaylistParser: Parser {
         case invalidSource
     }
 
+    /// Create a new parser.
+    public init() {}
+
     /// Parse a playlist.
     /// - Parameter input: source.
     /// - Returns: playlist.

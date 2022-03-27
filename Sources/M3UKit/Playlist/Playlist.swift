@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 /// Object representing a playlist containing TV channels.
-public struct Playlist: Equatable, Hashable {
+public struct Playlist: Equatable, Hashable, Codable {
     /// Create a playlist.
     /// - Parameter channels: channels.
     public init(channels: [Channel]) {

@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 /// Object representing attributes for a TV channel.
-public struct ChannelAttributes: Equatable, Hashable {
+public struct ChannelAttributes: Equatable, Hashable, Codable {
     /// Create a new channel.
     /// - Parameters:
     ///   - id: id.
