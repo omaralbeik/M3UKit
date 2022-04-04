@@ -44,6 +44,25 @@ http://wowza5.video-streams.nl:1935/denhaag/denhaag/playlist.m3u8
 let playlist = try parser.parse(raw)
 ```
 
+M3UKit also supports asynchronous parsing with a completion handler or with the new async/await API
+
+```swift
+parser.parse(url) { result in
+    switch result {
+    case .success(let playlist):
+        // consume playlist
+    case .failure(let error):
+        // handle error
+    }
+}
+```
+
+or
+
+```swift
+let playlist = try await parser.parse(url)
+```
+
 ---
 
 ## Schema
@@ -87,7 +106,7 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for ma
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.2.0")
+    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.3.0")
 ]
 ```
 
@@ -102,7 +121,7 @@ $ swift build
 To integrate M3UKit into your Xcode project using [CocoaPods](https://cocoapods.org), specify it in your Podfile:
 
 ```rb
-pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.2.0'
+pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.3.0'
 ```
 
 ### Carthage
@@ -110,7 +129,7 @@ pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.2.0
 To integrate M3UKit into your Xcode project using [Carthage](https://github.com/Carthage/Carthage), specify it in your Cartfile:
 
 ```
-github "omaralbeik/M3UKit" ~> 0.2.0
+github "omaralbeik/M3UKit" ~> 0.3.0
 ```
 
 ### Manually
