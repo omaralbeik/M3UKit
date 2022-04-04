@@ -3,6 +3,7 @@
 A µ for parsing [.m3u files](https://en.wikipedia.org/wiki/M3U).
 
 [![CI](https://github.com/omaralbeik/M3UKit/workflows/M3UKit/badge.svg)](https://github.com/omaralbeik/M3UKit/actions)
+[![codecov](https://codecov.io/gh/omaralbeik/M3UKit/branch/main/graph/badge.svg?token=W42K82OT7M)](https://codecov.io/gh/omaralbeik/M3UKit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FM3UKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/omaralbeik/M3UKit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FM3UKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/omaralbeik/M3UKit)
 
