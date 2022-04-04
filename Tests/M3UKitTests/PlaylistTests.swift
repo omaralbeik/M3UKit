@@ -41,6 +41,51 @@ final class PlaylistTests: XCTestCase {
     XCTAssertThrowsError(try parser.parse(""))
     XCTAssertThrowsError(try parser.parse(InvalidSource()))
   }
+
+  func testParsingValidSourceWithACallback() {
+    let parser = PlaylistParser()
+    var channels: [Playlist.Channel] = []
+
+    let exp = expectation(description: "Parsing succeeded")
+    let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
+    parser.parse(validURL) { result in
+      switch result {
+      case .success(let playlist):
+        channels = playlist.channels
+        exp.fulfill()
+      case .failure:
+        break
+      }
+    }
+
+    waitForExpectations(timeout: 0.5)
+    XCTAssertEqual(channels.count, 105)
+  }
+
+  func testParsingInvalidSourceWithACallback() {
+    let parser = PlaylistParser()
+    let exp = expectation(description: "Parsing failed")
+
+    parser.parse("") { result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        exp.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 0.5)
+  }
+
+  @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
+  func testAsyncAwaitParsing() async throws {
+    let parser = PlaylistParser()
+
+    let url = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
+    let playlist = try await parser.parse(url)
+    XCTAssertEqual(playlist.channels.count, 105)
+  }
 }
 
 private struct InvalidSource: PlaylistSource {

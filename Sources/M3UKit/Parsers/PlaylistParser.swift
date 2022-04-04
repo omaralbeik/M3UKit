@@ -71,4 +71,38 @@ public final class PlaylistParser: Parser {
 
     return Playlist(channels: channels)
   }
+
+  /// Parse a playlist on a queue with a completion handler.
+  /// - Parameters:
+  ///   - input: source.
+  ///   - queue: queue to perform parsing on. Defaults to `.global(qos: .userInitiated)`
+  ///   - completion: completion handler to call with the result.
+  public func parse(
+    _ input: PlaylistSource,
+    queue: DispatchQueue = .global(qos: .userInitiated),
+    completion: @escaping (Result<Playlist, Error>) -> Void
+  ) {
+    queue.async {
+      do {
+        let playlist = try self.parse(input)
+        completion(.success(playlist))
+      } catch {
+        DispatchQueue.main.async {
+          completion(.failure(error))
+        }
+      }
+    }
+  }
+
+  @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
+  /// Parse a playlist.
+  /// - Parameter input: source.
+  /// - Returns: playlist.
+  public func parse(_ input: PlaylistSource) async throws -> Playlist {
+    return try await withCheckedThrowingContinuation { continuation in
+      self.parse(input) { result in
+        continuation.resume(with: result)
+      }
+    }
+  }
 }

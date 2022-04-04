@@ -23,9 +23,20 @@
 
 import Foundation
 
-protocol Parser {
-  associatedtype Input
-  associatedtype Output
+/// Playlist source.
+public protocol PlaylistSource {
+  /// Playlist contents raw string.
+  var rawString: String? { get }
+}
 
-  func parse(_ input: Input) throws -> Output
+extension String: PlaylistSource {
+  public var rawString: String? {
+    return self
+  }
+}
+
+extension URL: PlaylistSource {
+  public var rawString: String? {
+    return try? String(contentsOf: self, encoding: .utf8)
+  }
 }
