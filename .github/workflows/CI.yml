@@ -9,11 +9,26 @@ on:
       - main
 
 jobs:
-  build: 
-    runs-on: macos-latest 
-    steps: 
-    - uses: actions/checkout@v2
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Get Sources
+        uses: actions/checkout@v2
+
+      - name: Build Package
+        run: swift build -v
+
+      - name: Run tests
+        run: swift test --enable-code-coverage -v
+      
+      - name: Gather code coverage
+        run: xcrun llvm-cov export -format="lcov" .build/debug/M3UKitPackageTests.xctest/Contents/MacOS/M3UKitPackageTests -instr-profile .build/debug/codecov/default.profdata > coverage_report.lcov
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: fail
+          files: ./coverage_report.lcov
+          verbose: true
