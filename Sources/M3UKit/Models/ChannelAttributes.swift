@@ -21,8 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// Object representing attributes for a TV channel.
-public struct ChannelAttributes: Equatable, Hashable, Codable {
+extension Playlist.Channel {
+  /// Object representing attributes for a channel.
+  public struct Attributes: Equatable, Hashable, Codable {
     /// Create a new channel.
     /// - Parameters:
     ///   - id: id.
@@ -34,23 +35,23 @@ public struct ChannelAttributes: Equatable, Hashable, Codable {
     ///   - shift: shift.
     ///   - groupTitle: group title.
     public init(
-        id: String? = nil,
-        name: String? = nil,
-        country: String? = nil,
-        language: String? = nil,
-        logo: String? = nil,
-        channelNumber: String? = nil,
-        shift: String? = nil,
-        groupTitle: String? = nil
+      id: String? = nil,
+      name: String? = nil,
+      country: String? = nil,
+      language: String? = nil,
+      logo: String? = nil,
+      channelNumber: String? = nil,
+      shift: String? = nil,
+      groupTitle: String? = nil
     ) {
-        self.id = id
-        self.name = name
-        self.country = country
-        self.language = language
-        self.logo = logo
-        self.channelNumber = channelNumber
-        self.shift = shift
-        self.groupTitle = groupTitle
+      self.id = id
+      self.name = name
+      self.country = country
+      self.language = language
+      self.logo = logo
+      self.channelNumber = channelNumber
+      self.shift = shift
+      self.groupTitle = groupTitle
     }
 
     /// tvg-id.
@@ -76,4 +77,5 @@ public struct ChannelAttributes: Equatable, Hashable, Codable {
 
     /// group-title.
     public var groupTitle: String?
+  }
 }

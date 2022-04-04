@@ -25,12 +25,12 @@ import XCTest
 @testable import M3UKit
 
 final class ParserTests: XCTestCase {
-    func testString() {
-        XCTAssertEqual("foo".rawString, "foo")
-    }
+  func testString() {
+    XCTAssertEqual("foo".rawString, "foo")
+  }
 
-    func testURL() {
-        let url = Bundle.module.url(forResource: "text", withExtension: "txt")
-        XCTAssertEqual(url?.rawString, "foo\n")
-    }
+  func testURL() {
+    let url = Bundle.module.url(forResource: "text", withExtension: "txt")
+    XCTAssertEqual(url?.rawString, "foo\n")
+  }
 }

@@ -23,30 +23,40 @@
 
 import Foundation
 
-/// Playlist source.
-public protocol PlaylistSource {
-    /// Playlist contents raw string.
-    var rawString: String? { get }
-}
+final class ChannelParser: Parser {
+  enum ParsingError: LocalizedError {
+    case invalidChannel
+  }
 
-extension String: PlaylistSource {
-    public var rawString: String? {
-        return self
+  func parse(_ input: (metadata: String, url: URL)) throws -> Playlist.Channel {
+    let duration = try extractDuration(input.metadata)
+    let attributes = try attributesParser.parse(input.metadata)
+    let name = extractName(input.metadata)
+    let url = input.url
+
+    return .init(
+      duration: duration,
+      attributes: attributes,
+      name: name,
+      url: url
+    )
+  }
+
+  func extractDuration(_ metadata: String) throws -> Int {
+    guard
+      let match = durationRegex.firstMatch(in: metadata),
+      let duration = Int(match)
+    else {
+      throw ParsingError.invalidChannel
     }
-}
+    return duration
+  }
 
-extension URL: PlaylistSource {
-    public var rawString: String? {
-        return try? String(contentsOf: self, encoding: .utf8)
-    }
-}
+  func extractName(_ metadata: String) -> String {
+    return nameRegex.firstMatch(in: metadata) ?? ""
+  }
 
-/// Parser.
-public protocol Parser {
-    associatedtype Input
-    associatedtype Output
-
-    /// Create an output from input.
-    /// - Returns: output.
-    func parse(_ input: Input) throws -> Output
+  let attributesParser = ChannelAttributesParser()
+  let durationRegex: RegularExpression = #"#EXTINF:(\-*\d+)"#
+  let nameRegex: RegularExpression = #".*,(.+?)$"#
 }
