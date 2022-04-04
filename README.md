@@ -1,6 +1,6 @@
 # M3UKit
 
-A µ for parsing [.m3u files](https://en.wikipedia.org/wiki/M3U).
+A µ framework for parsing [m3u files](https://en.wikipedia.org/wiki/M3U).
 
 [![CI](https://github.com/omaralbeik/M3UKit/workflows/M3UKit/badge.svg)](https://github.com/omaralbeik/M3UKit/actions)
 [![codecov](https://codecov.io/gh/omaralbeik/M3UKit/branch/main/graph/badge.svg?token=W42K82OT7M)](https://codecov.io/gh/omaralbeik/M3UKit)
