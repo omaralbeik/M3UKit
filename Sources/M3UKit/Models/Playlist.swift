@@ -23,12 +23,12 @@
 
 /// Object representing a playlist containing TV channels.
 public struct Playlist: Equatable, Hashable, Codable {
-    /// Create a playlist.
-    /// - Parameter channels: channels.
-    public init(channels: [Channel]) {
-        self.channels = channels
-    }
+  /// Create a playlist.
+  /// - Parameter channels: channels.
+  public init(channels: [Channel]) {
+    self.channels = channels
+  }
 
-    /// Channels.
-    public var channels: [Channel]
+  /// Channels.
+  public var channels: [Channel]
 }

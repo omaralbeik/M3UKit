@@ -25,50 +25,50 @@ import Foundation
 
 /// A class to parse `Playlist` objects from a `PlaylistSource`.
 public final class PlaylistParser: Parser {
-    enum ParsingError: LocalizedError {
-        case invalidSource
+  enum ParsingError: LocalizedError {
+    case invalidSource
+  }
+
+  /// Create a new parser.
+  public init() {}
+
+  /// Parse a playlist.
+  /// - Parameter input: source.
+  /// - Returns: playlist.
+  public func parse(_ input: PlaylistSource) throws -> Playlist {
+    guard let rawString = input.rawString else {
+      throw ParsingError.invalidSource
     }
 
-    /// Create a new parser.
-    public init() {}
-
-    /// Parse a playlist.
-    /// - Parameter input: source.
-    /// - Returns: playlist.
-    public func parse(_ input: PlaylistSource) throws -> Playlist {
-        guard let rawString = input.rawString else {
-            throw ParsingError.invalidSource
-        }
-
-        guard rawString.starts(with: "#EXTM3U") else {
-            throw ParsingError.invalidSource
-        }
-
-        let channelParser = ChannelParser()
-
-        var channels: [Channel] = []
-        var channelParsingError: Error?
-        var lastMetadata: String?
-
-        rawString.enumerateLines { line, stop in
-            if let url = URL(string: line) {
-                guard let metadata = lastMetadata else { return }
-                do {
-                    let channel = try channelParser.parse((metadata, url))
-                    channels.append(channel)
-                } catch {
-                    channelParsingError = error
-                    stop = true
-                }
-            } else {
-                lastMetadata = line
-            }
-        }
-
-        if let error = channelParsingError {
-            throw error
-        }
-
-        return Playlist(channels: channels)
+    guard rawString.starts(with: "#EXTM3U") else {
+      throw ParsingError.invalidSource
     }
+
+    let channelParser = ChannelParser()
+
+    var channels: [Playlist.Channel] = []
+    var channelParsingError: Error?
+    var lastMetadata: String?
+
+    rawString.enumerateLines { line, stop in
+      if let url = URL(string: line) {
+        guard let metadata = lastMetadata else { return }
+        do {
+          let channel = try channelParser.parse((metadata, url))
+          channels.append(channel)
+        } catch {
+          channelParsingError = error
+          stop = true
+        }
+      } else {
+        lastMetadata = line
+      }
+    }
+
+    if let error = channelParsingError {
+      throw error
+    }
+
+    return Playlist(channels: channels)
+  }
 }

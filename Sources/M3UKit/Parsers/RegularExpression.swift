@@ -23,35 +23,28 @@
 
 import Foundation
 
-/// Object representing a TV channel.
-public struct Channel: Equatable, Hashable, Codable {
-    /// Create a new channel object.
-    /// - Parameters:
-    ///   - duration: duration.
-    ///   - attributes: attributes.
-    ///   - name: name.
-    ///   - url: url.
-    public init(
-        duration: Int,
-        attributes: ChannelAttributes,
-        name: String,
-        url: URL
-    ) {
-        self.duration = duration
-        self.attributes = attributes
-        self.name = name
-        self.url = url
+struct RegularExpression {
+  let regex: NSRegularExpression
+
+  init(_ regex: NSRegularExpression) {
+    self.regex = regex
+  }
+
+  func firstMatch(in source: String) -> String? {
+    let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
+    guard
+      let match = regex.firstMatch(in: source, range: sourceRange),
+      let range = Range(match.range(at: 1), in: source)
+    else {
+      return nil
     }
+    return String(source[range])
+  }
+}
 
-    /// Duration, -1 for live channels.
-    public var duration: Int
-
-    /// Attributes.
-    public var attributes: ChannelAttributes
-
-    /// Channel name.
-    public var name: String
-
-    /// Channel URL.
-    public var url: URL
+extension RegularExpression: ExpressibleByStringLiteral {
+  init(stringLiteral value: String) {
+    let regex = try! NSRegularExpression(pattern: value, options: [])
+    self.init(regex)
+  }
 }

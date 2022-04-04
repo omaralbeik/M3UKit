@@ -25,51 +25,51 @@ import XCTest
 @testable import M3UKit
 
 final class ChannelAttributesTests: XCTestCase {
-    func testInit() {
-        let id = "id"
-        let name = "name"
-        let country = "country"
-        let language = "language"
-        let logo = "logo"
-        let channelNumber = "channelNumber"
-        let shift = "shift"
-        let groupTitle = "groupTitle"
+  func testInit() {
+    let id = "id"
+    let name = "name"
+    let country = "country"
+    let language = "language"
+    let logo = "logo"
+    let channelNumber = "channelNumber"
+    let shift = "shift"
+    let groupTitle = "groupTitle"
 
-        let attributes = ChannelAttributes(
-            id: id,
-            name: name,
-            country: country,
-            language: language,
-            logo: logo,
-            channelNumber: channelNumber,
-            shift: shift,
-            groupTitle: groupTitle
-        )
+    let attributes = Playlist.Channel.Attributes(
+      id: id,
+      name: name,
+      country: country,
+      language: language,
+      logo: logo,
+      channelNumber: channelNumber,
+      shift: shift,
+      groupTitle: groupTitle
+    )
 
-        XCTAssertEqual(attributes.id, id)
-        XCTAssertEqual(attributes.name, name)
-        XCTAssertEqual(attributes.country, country)
-        XCTAssertEqual(attributes.language, language)
-        XCTAssertEqual(attributes.logo, logo)
-        XCTAssertEqual(attributes.channelNumber, channelNumber)
-        XCTAssertEqual(attributes.shift, shift)
-        XCTAssertEqual(attributes.groupTitle, groupTitle)
-    }
+    XCTAssertEqual(attributes.id, id)
+    XCTAssertEqual(attributes.name, name)
+    XCTAssertEqual(attributes.country, country)
+    XCTAssertEqual(attributes.language, language)
+    XCTAssertEqual(attributes.logo, logo)
+    XCTAssertEqual(attributes.channelNumber, channelNumber)
+    XCTAssertEqual(attributes.shift, shift)
+    XCTAssertEqual(attributes.groupTitle, groupTitle)
+  }
 
-    func testParsing() throws {
-        let rawChannel = """
+  func testParsing() throws {
+    let rawChannel = """
 #EXTINF:-1 tvg-name="DWEnglish.de" tvg-id="DWEnglish.de" tvg-country="INT" tvg-language="English" tvg-logo="https://i.imgur.com/A1xzjOI.png" tvg-chno="1" tvg-shift="0" group-title="News",DW English (1080p)
 https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
 """
-        let parser = ChannelAttributesParser()
-        let attributes = try parser.parse(rawChannel)
-        XCTAssertEqual(attributes.name, "DWEnglish.de")
-        XCTAssertEqual(attributes.id, "DWEnglish.de")
-        XCTAssertEqual(attributes.country, "INT")
-        XCTAssertEqual(attributes.language, "English")
-        XCTAssertEqual(attributes.logo, "https://i.imgur.com/A1xzjOI.png")
-        XCTAssertEqual(attributes.channelNumber, "1")
-        XCTAssertEqual(attributes.shift, "0")
-        XCTAssertEqual(attributes.groupTitle, "News")
-    }
+    let parser = ChannelAttributesParser()
+    let attributes = try parser.parse(rawChannel)
+    XCTAssertEqual(attributes.name, "DWEnglish.de")
+    XCTAssertEqual(attributes.id, "DWEnglish.de")
+    XCTAssertEqual(attributes.country, "INT")
+    XCTAssertEqual(attributes.language, "English")
+    XCTAssertEqual(attributes.logo, "https://i.imgur.com/A1xzjOI.png")
+    XCTAssertEqual(attributes.channelNumber, "1")
+    XCTAssertEqual(attributes.shift, "0")
+    XCTAssertEqual(attributes.groupTitle, "News")
+  }
 }

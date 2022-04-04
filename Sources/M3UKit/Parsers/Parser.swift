@@ -23,28 +23,30 @@
 
 import Foundation
 
-struct RegularExpression {
-    let regex: NSRegularExpression
-
-    init(_ regex: NSRegularExpression) {
-        self.regex = regex
-    }
-
-    func firstMatch(in source: String) -> String? {
-        let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
-        guard
-            let match = regex.firstMatch(in: source, range: sourceRange),
-            let range = Range(match.range(at: 1), in: source)
-        else {
-            return nil
-        }
-        return String(source[range])
-    }
+/// Playlist source.
+public protocol PlaylistSource {
+  /// Playlist contents raw string.
+  var rawString: String? { get }
 }
 
-extension RegularExpression: ExpressibleByStringLiteral {
-    init(stringLiteral value: String) {
-        let regex = try! NSRegularExpression(pattern: value, options: [])
-        self.init(regex)
-    }
+extension String: PlaylistSource {
+  public var rawString: String? {
+    return self
+  }
+}
+
+extension URL: PlaylistSource {
+  public var rawString: String? {
+    return try? String(contentsOf: self, encoding: .utf8)
+  }
+}
+
+/// Parser.
+protocol Parser {
+  associatedtype Input
+  associatedtype Output
+
+  /// Create an output from input.
+  /// - Returns: output.
+  func parse(_ input: Input) throws -> Output
 }

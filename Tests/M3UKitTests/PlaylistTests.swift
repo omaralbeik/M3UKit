@@ -25,24 +25,24 @@ import XCTest
 @testable import M3UKit
 
 final class PlaylistTests: XCTestCase {
-    func testInit() {
-        XCTAssert(Playlist(channels: []).channels.isEmpty)
-    }
+  func testInit() {
+    XCTAssert(Playlist(channels: []).channels.isEmpty)
+  }
 
-    func testParsing() throws {
-        let parser = PlaylistParser()
+  func testParsing() throws {
+    let parser = PlaylistParser()
 
-        let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
-        let playlist = try parser.parse(validURL)
-        XCTAssertEqual(playlist.channels.count, 105)
+    let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
+    let playlist = try parser.parse(validURL)
+    XCTAssertEqual(playlist.channels.count, 105)
 
-        let invalidURL = Bundle.module.url(forResource: "invalid", withExtension: "m3u")!
-        XCTAssertThrowsError(try parser.parse(invalidURL))
-        XCTAssertThrowsError(try parser.parse(""))
-        XCTAssertThrowsError(try parser.parse(InvalidSource()))
-    }
+    let invalidURL = Bundle.module.url(forResource: "invalid", withExtension: "m3u")!
+    XCTAssertThrowsError(try parser.parse(invalidURL))
+    XCTAssertThrowsError(try parser.parse(""))
+    XCTAssertThrowsError(try parser.parse(InvalidSource()))
+  }
 }
 
 private struct InvalidSource: PlaylistSource {
-    var rawString: String? { nil }
+  var rawString: String? { nil }
 }

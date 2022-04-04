@@ -23,40 +23,37 @@
 
 import Foundation
 
-final class ChannelParser: Parser {
-    enum ParsingError: LocalizedError {
-        case invalidChannel
+extension Playlist {
+  /// Object representing a TV channel.
+  public struct Channel: Equatable, Hashable, Codable {
+    /// Create a new channel object.
+    /// - Parameters:
+    ///   - duration: duration.
+    ///   - attributes: attributes.
+    ///   - name: name.
+    ///   - url: url.
+    public init(
+      duration: Int,
+      attributes: Attributes,
+      name: String,
+      url: URL
+    ) {
+      self.duration = duration
+      self.attributes = attributes
+      self.name = name
+      self.url = url
     }
 
-    func parse(_ input: (metadata: String, url: URL)) throws -> Channel {
-        let duration = try extractDuration(input.metadata)
-        let attributes = try attributesParser.parse(input.metadata)
-        let name = extractName(input.metadata)
-        let url = input.url
+    /// Duration, -1 for live channels.
+    public var duration: Int
 
-        return .init(
-            duration: duration,
-            attributes: attributes,
-            name: name,
-            url: url
-        )
-    }
+    /// Attributes.
+    public var attributes: Attributes
 
-    func extractDuration(_ metadata: String) throws -> Int {
-        guard
-            let match = durationRegex.firstMatch(in: metadata),
-            let duration = Int(match)
-        else {
-            throw ParsingError.invalidChannel
-        }
-        return duration
-    }
+    /// Channel name.
+    public var name: String
 
-    func extractName(_ metadata: String) -> String {
-        return nameRegex.firstMatch(in: metadata) ?? ""
-    }
-
-    let attributesParser = ChannelAttributesParser()
-    let durationRegex: RegularExpression = #"#EXTINF:(\-*\d+)"#
-    let nameRegex: RegularExpression = #".*,(.+?)$"#
+    /// Channel URL.
+    public var url: URL
+  }
 }

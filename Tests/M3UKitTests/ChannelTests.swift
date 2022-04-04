@@ -25,33 +25,33 @@ import XCTest
 @testable import M3UKit
 
 final class ChannelTests: XCTestCase {
-    func testInit() {
-        let duration = 0
-        let attributes = ChannelAttributes()
-        let name = "name"
-        let url = URL(string: "https://not.a/real/url")!
-
-        let channel = Channel(
-            duration: duration,
-            attributes: attributes,
-            name: name,
-            url: url
-        )
-
-        XCTAssertEqual(channel.duration, duration)
-        XCTAssertEqual(channel.attributes, attributes)
-        XCTAssertEqual(channel.name, name)
-        XCTAssertEqual(channel.url, url)
-    }
-
-    func testExtractingDuration() throws {
-        let parser = ChannelParser()
-        XCTAssertThrowsError(try parser.extractDuration("invalid"))
-    }
-
-    func testExtractingName() throws {
-        let parser = ChannelParser()
-        XCTAssertEqual(parser.extractName("invalid"), "")
-        XCTAssertEqual(parser.extractName(",valid"), "valid")
-    }
+  func testInit() {
+    let duration = 0
+    let attributes = Playlist.Channel.Attributes()
+    let name = "name"
+    let url = URL(string: "https://not.a/real/url")!
+    
+    let channel = Playlist.Channel(
+      duration: duration,
+      attributes: attributes,
+      name: name,
+      url: url
+    )
+    
+    XCTAssertEqual(channel.duration, duration)
+    XCTAssertEqual(channel.attributes, attributes)
+    XCTAssertEqual(channel.name, name)
+    XCTAssertEqual(channel.url, url)
+  }
+  
+  func testExtractingDuration() throws {
+    let parser = ChannelParser()
+    XCTAssertThrowsError(try parser.extractDuration("invalid"))
+  }
+  
+  func testExtractingName() throws {
+    let parser = ChannelParser()
+    XCTAssertEqual(parser.extractName("invalid"), "")
+    XCTAssertEqual(parser.extractName(",valid"), "valid")
+  }
 }
