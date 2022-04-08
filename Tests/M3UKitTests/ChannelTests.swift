@@ -43,15 +43,48 @@ final class ChannelTests: XCTestCase {
     XCTAssertEqual(channel.name, name)
     XCTAssertEqual(channel.url, url)
   }
+
+  func testIsLive() {
+    let liveChannel = Playlist.Channel(
+      duration: -1,
+      attributes: .init(),
+      name: "Channel",
+      url: URL(string: "https://cnn-cnninternational-1-de.samsung.wurl.com/manifest/playlist.m3u8")!
+    )
+    XCTAssert(liveChannel.isLive)
+
+    let channel = Playlist.Channel(
+      duration: -1,
+      attributes: .init(),
+      name: "Channel",
+      url: URL(string: "https://not.a/real/url")!
+    )
+    XCTAssertFalse(channel.isLive)
+  }
   
   func testExtractingDuration() throws {
-    let parser = ChannelParser()
-    XCTAssertThrowsError(try parser.extractDuration("invalid"))
+    let parser = ChannelMetadataParser()
+    XCTAssertThrowsError(try parser.extractDuration((1, "invalid")))
   }
   
   func testExtractingName() throws {
-    let parser = ChannelParser()
+    let parser = ChannelMetadataParser()
     XCTAssertEqual(parser.extractName("invalid"), "")
     XCTAssertEqual(parser.extractName(",valid"), "valid")
   }
+
+  func testIsInfoLine() {
+    let parser = ChannelMetadataParser()
+    XCTAssertTrue(parser.isInfoLine("#EXTINF:-1 tvg-id="))
+    XCTAssertFalse(parser.isInfoLine("#EXTVLCOPT:http-user-agent"))
+  }
+
+  func testErrorDescription() {
+    let error = ChannelMetadataParser.ParsingError.missingDuration(3, "invalid line")
+    XCTAssertEqual(
+      error.errorDescription,
+      "Line 3: Missing duration in line \"invalid line\""
+    )
+  }
+
 }

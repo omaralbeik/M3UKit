@@ -27,6 +27,10 @@ import Foundation
 public final class PlaylistParser: Parser {
   enum ParsingError: LocalizedError {
     case invalidSource
+
+    var errorDescription: String? {
+      "The playlist is invalid"
+    }
   }
 
   /// Create a new parser.
@@ -44,28 +48,37 @@ public final class PlaylistParser: Parser {
       throw ParsingError.invalidSource
     }
 
-    let channelParser = ChannelParser()
-
     var channels: [Playlist.Channel] = []
-    var channelParsingError: Error?
-    var lastMetadata: String?
+
+    let metadataParser = ChannelMetadataParser()
+    var lastMetadataLine: String?
+    var lastURL: URL?
+    var channelMetadataParsingError: Error?
+    var lineNumber = 0
 
     rawString.enumerateLines { line, stop in
-      if let url = URL(string: line) {
-        guard let metadata = lastMetadata else { return }
+      if metadataParser.isInfoLine(line) {
+        lastMetadataLine = line
+      } else if let url = URL(string: line) {
+        lastURL = url
+      }
+
+      if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
-          let channel = try channelParser.parse((metadata, url))
-          channels.append(channel)
+          let metadata = try metadataParser.parse((lineNumber, metadataLine))
+          channels.append(.init(metadata: metadata, url: url))
+          lastMetadataLine = nil
+          lastURL = nil
         } catch {
-          channelParsingError = error
+          channelMetadataParsingError = error
           stop = true
         }
-      } else {
-        lastMetadata = line
       }
+
+      lineNumber += 1
     }
 
-    if let error = channelParsingError {
+    if let error = channelMetadataParsingError {
       throw error
     }
 
