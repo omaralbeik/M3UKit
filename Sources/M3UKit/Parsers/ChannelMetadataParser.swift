@@ -23,37 +23,41 @@
 
 import Foundation
 
-final class ChannelParser: Parser {
+final class ChannelMetadataParser: Parser {
   enum ParsingError: LocalizedError {
-    case invalidChannel
+    case missingDuration(Int, String)
+
+    var errorDescription: String? {
+      switch self {
+      case .missingDuration(let lineNumber, let rawString):
+        return "Line \(lineNumber): Missing duration in line \"\(rawString)\""
+      }
+    }
   }
 
-  func parse(_ input: (metadata: String, url: URL)) throws -> Playlist.Channel {
-    let duration = try extractDuration(input.metadata)
-    let attributes = try attributesParser.parse(input.metadata)
-    let name = extractName(input.metadata)
-    let url = input.url
-
-    return .init(
-      duration: duration,
-      attributes: attributes,
-      name: name,
-      url: url
-    )
+  func parse(_ input: (line: Int, rawString: String)) throws -> Playlist.Channel.Metadata {
+    let duration = try extractDuration(input)
+    let attributes = try attributesParser.parse(input.rawString)
+    let name = extractName(input.rawString)
+    return (duration, attributes, name)
   }
 
-  func extractDuration(_ metadata: String) throws -> Int {
+  func isInfoLine(_ input: String) -> Bool {
+    return input.starts(with: "#EXTINF:")
+  }
+
+  func extractDuration(_ input: (line: Int, rawString: String)) throws -> Int {
     guard
-      let match = durationRegex.firstMatch(in: metadata),
+      let match = durationRegex.firstMatch(in: input.rawString),
       let duration = Int(match)
     else {
-      throw ParsingError.invalidChannel
+      throw ParsingError.missingDuration(input.line, input.rawString)
     }
     return duration
   }
 
-  func extractName(_ metadata: String) -> String {
-    return nameRegex.firstMatch(in: metadata) ?? ""
+  func extractName(_ input: String) -> String {
+    return nameRegex.firstMatch(in: input) ?? ""
   }
 
   let attributesParser = ChannelAttributesParser()

@@ -42,6 +42,11 @@ final class PlaylistTests: XCTestCase {
     XCTAssertThrowsError(try parser.parse(InvalidSource()))
   }
 
+  func testErrorDescription() {
+    let error = PlaylistParser.ParsingError.invalidSource
+    XCTAssertEqual(error.errorDescription, "The playlist is invalid")
+  }
+
   func testParsingValidSourceWithACallback() {
     let parser = PlaylistParser()
     var channels: [Playlist.Channel] = []

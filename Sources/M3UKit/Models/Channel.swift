@@ -26,6 +26,21 @@ import Foundation
 extension Playlist {
   /// Object representing a TV channel.
   public struct Channel: Equatable, Hashable, Codable {
+    typealias Metadata = (
+      duration: Int,
+      attributes: Attributes,
+      name: String
+    )
+
+    init(metadata: Metadata, url: URL) {
+      self.init(
+        duration: metadata.duration,
+        attributes: metadata.attributes,
+        name: metadata.name,
+        url: url
+      )
+    }
+
     /// Create a new channel object.
     /// - Parameters:
     ///   - duration: duration.
@@ -55,5 +70,10 @@ extension Playlist {
 
     /// Channel URL.
     public var url: URL
+
+    /// Whether the channel is a live channel (its URL ends with .m3u8) or not.
+    public var isLive: Bool {
+      url.absoluteString.hasSuffix(".m3u8")
+    }
   }
 }
