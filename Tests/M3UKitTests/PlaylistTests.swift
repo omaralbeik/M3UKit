@@ -42,6 +42,32 @@ final class PlaylistTests: XCTestCase {
     XCTAssertThrowsError(try parser.parse(InvalidSource()))
   }
 
+	func testWalking() throws {
+		let parser = PlaylistParser()
+		var channels: [Playlist.Channel] = []
+
+		let exp = expectation(description: "Walking succeeded")
+		let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
+		try parser.walk(validURL) { channel in
+			channels.append(channel)
+			if channels.count == 105 {
+				exp.fulfill()
+			}
+		}
+
+		waitForExpectations(timeout: 1)
+		XCTAssertEqual(channels.count, 105)
+	}
+
+	func testWalkingInvalidSource() {
+		let parser = PlaylistParser()
+		XCTAssertThrowsError(try parser.walk("") { _ in })
+
+		let invalidURL = Bundle.module.url(forResource: "invalid", withExtension: "m3u")!
+		XCTAssertThrowsError(try parser.walk(invalidURL) { _ in })
+	}
+
+
   func testErrorDescription() {
     let error = PlaylistParser.ParsingError.invalidSource
     XCTAssertEqual(error.errorDescription, "The playlist is invalid")
