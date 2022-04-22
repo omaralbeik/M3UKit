@@ -40,7 +40,7 @@ public final class PlaylistParser: Parser {
   /// - Parameter input: source.
   /// - Returns: playlist.
   public func parse(_ input: PlaylistSource) throws -> Playlist {
-		let rawString = try extractRawString(from: input)
+    let rawString = try extractRawString(from: input)
 
     var channels: [Playlist.Channel] = []
 
@@ -79,47 +79,47 @@ public final class PlaylistParser: Parser {
     return Playlist(channels: channels)
   }
 
-	/// Walk over a playlist and return its channels one-by-one.
-	/// - Parameters:
-	///   - input: source.
-	///   - handler: Handler to be called with the parsed channel.
-	public func walk(
-		_ input: PlaylistSource,
-		handler: @escaping (Playlist.Channel) -> Void
-	) throws {
-		let rawString = try extractRawString(from: input)
+  /// Walk over a playlist and return its channels one-by-one.
+  /// - Parameters:
+  ///   - input: source.
+  ///   - handler: Handler to be called with the parsed channel.
+  public func walk(
+    _ input: PlaylistSource,
+    handler: @escaping (Playlist.Channel) -> Void
+  ) throws {
+    let rawString = try extractRawString(from: input)
 
-		let metadataParser = ChannelMetadataParser()
-		var lastMetadataLine: String?
-		var lastURL: URL?
-		var channelMetadataParsingError: Error?
-		var lineNumber = 0
+    let metadataParser = ChannelMetadataParser()
+    var lastMetadataLine: String?
+    var lastURL: URL?
+    var channelMetadataParsingError: Error?
+    var lineNumber = 0
 
-		rawString.enumerateLines { line, stop in
-			if metadataParser.isInfoLine(line) {
-				lastMetadataLine = line
-			} else if let url = URL(string: line) {
-				lastURL = url
-			}
+    rawString.enumerateLines { line, stop in
+      if metadataParser.isInfoLine(line) {
+        lastMetadataLine = line
+      } else if let url = URL(string: line) {
+        lastURL = url
+      }
 
-			if let metadataLine = lastMetadataLine, let url = lastURL {
-				do {
-					let metadata = try metadataParser.parse((lineNumber, metadataLine))
-					handler(.init(metadata: metadata, url: url))
-					lastMetadataLine = nil
-					lastURL = nil
-				} catch {
-					channelMetadataParsingError = error
-					stop = true
-				}
-			}
-			lineNumber += 1
-		}
+      if let metadataLine = lastMetadataLine, let url = lastURL {
+        do {
+          let metadata = try metadataParser.parse((lineNumber, metadataLine))
+          handler(.init(metadata: metadata, url: url))
+          lastMetadataLine = nil
+          lastURL = nil
+        } catch {
+          channelMetadataParsingError = error
+          stop = true
+        }
+      }
+      lineNumber += 1
+    }
 
-		if let error = channelMetadataParsingError {
-			throw error
-		}
-	}
+    if let error = channelMetadataParsingError {
+      throw error
+    }
+  }
 
   /// Parse a playlist on a queue with a completion handler.
   /// - Parameters:
@@ -155,17 +155,17 @@ public final class PlaylistParser: Parser {
     }
   }
 
-	// MARK: - Helpers
+  // MARK: - Helpers
 
-	private func extractRawString(from input: PlaylistSource) throws -> String {
-		guard let rawString = input.rawString else {
-			throw ParsingError.invalidSource
-		}
-
-		guard rawString.starts(with: "#EXTM3U") else {
-			throw ParsingError.invalidSource
-		}
-
-		return rawString
-	}
+  private func extractRawString(from input: PlaylistSource) throws -> String {
+    let filePrefix = "#EXTM3U"
+    guard var rawString = input.rawString else {
+      throw ParsingError.invalidSource
+    }
+    guard rawString.starts(with: filePrefix) else {
+      throw ParsingError.invalidSource
+    }
+    rawString.removeFirst(filePrefix.count)
+    return rawString
+  }
 }
