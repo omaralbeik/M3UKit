@@ -157,7 +157,7 @@ public final class PlaylistParser: Parser {
 
   // MARK: - Helpers
 
-  private func extractRawString(from input: PlaylistSource) throws -> Substring {
+  private func extractRawString(from input: PlaylistSource) throws -> String {
     let filePrefix = "#EXTM3U"
     guard var rawString = input.rawString else {
       throw ParsingError.invalidSource
@@ -166,6 +166,6 @@ public final class PlaylistParser: Parser {
       throw ParsingError.invalidSource
     }
     rawString.removeFirst(filePrefix.count)
-    return rawString[...]
+    return rawString
   }
 }
