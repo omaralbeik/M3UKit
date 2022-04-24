@@ -134,7 +134,9 @@ public final class PlaylistParser: Parser {
     queue.async {
       do {
         let playlist = try self.parse(input)
-        completion(.success(playlist))
+        DispatchQueue.main.async {
+          completion(.success(playlist))
+        }
       } catch {
         DispatchQueue.main.async {
           completion(.failure(error))
