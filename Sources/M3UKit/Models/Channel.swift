@@ -70,10 +70,5 @@ extension Playlist {
 
     /// Channel URL.
     public var url: URL
-
-    /// Whether the channel is a live channel (its URL ends with .m3u8) or not.
-    public var isLive: Bool {
-      url.absoluteString.hasSuffix(".m3u8")
-    }
   }
 }

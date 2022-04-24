@@ -106,7 +106,7 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for ma
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.5.1")
+    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.5.2")
 ]
 ```
 
@@ -121,7 +121,7 @@ $ swift build
 To integrate M3UKit into your Xcode project using [CocoaPods](https://cocoapods.org), specify it in your Podfile:
 
 ```rb
-pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.5.1'
+pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.5.2'
 ```
 
 ### Carthage
@@ -129,7 +129,7 @@ pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.5.1
 To integrate M3UKit into your Xcode project using [Carthage](https://github.com/Carthage/Carthage), specify it in your Cartfile:
 
 ```
-github "omaralbeik/M3UKit" ~> 0.5.1
+github "omaralbeik/M3UKit" ~> 0.5.2
 ```
 
 ### Manually
