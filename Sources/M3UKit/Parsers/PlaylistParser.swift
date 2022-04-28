@@ -124,21 +124,23 @@ public final class PlaylistParser: Parser {
   /// Parse a playlist on a queue with a completion handler.
   /// - Parameters:
   ///   - input: source.
-  ///   - queue: queue to perform parsing on. Defaults to `.global(qos: .userInitiated)`
+  ///   - processingQueue: queue to perform parsing on. Defaults to `.global(qos: .background)`
+  ///   - callbackQueue: queue to call callback on. Defaults to `.main`
   ///   - completion: completion handler to call with the result.
   public func parse(
     _ input: PlaylistSource,
-    queue: DispatchQueue = .global(qos: .userInitiated),
+    processingQueue: DispatchQueue = .global(qos: .background),
+    callbackQueue: DispatchQueue = .main,
     completion: @escaping (Result<Playlist, Error>) -> Void
   ) {
-    queue.async {
+    processingQueue.async {
       do {
         let playlist = try self.parse(input)
-        DispatchQueue.main.async {
+        callbackQueue.async {
           completion(.success(playlist))
         }
       } catch {
-        DispatchQueue.main.async {
+        callbackQueue.async {
           completion(.failure(error))
         }
       }
@@ -148,13 +150,17 @@ public final class PlaylistParser: Parser {
   @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
   /// Parse a playlist.
   /// - Parameter input: source.
+  /// - Parameter priority: Processing task priority. Defaults to `.background`
   /// - Returns: playlist.
-  public func parse(_ input: PlaylistSource) async throws -> Playlist {
-    return try await withCheckedThrowingContinuation { continuation in
-      self.parse(input) { result in
-        continuation.resume(with: result)
-      }
+  public func parse(
+    _ input: PlaylistSource,
+    priority: TaskPriority = .background
+  ) async throws -> Playlist {
+    let processingTask = Task(priority: priority) { () -> Playlist in
+      let playlist = try self.parse(input)
+      return playlist
     }
+    return try await processingTask.value
   }
 
   // MARK: - Helpers
