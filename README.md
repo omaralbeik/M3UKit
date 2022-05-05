@@ -1,6 +1,6 @@
 # M3UKit
 
-A µ framework for parsing [m3u files](https://en.wikipedia.org/wiki/M3U).
+Modern framework for parsing [m3u](https://en.wikipedia.org/wiki/M3U) files.
 
 [![CI](https://github.com/omaralbeik/M3UKit/workflows/M3UKit/badge.svg)](https://github.com/omaralbeik/M3UKit/actions)
 [![codecov](https://codecov.io/gh/omaralbeik/M3UKit/branch/main/graph/badge.svg?token=W42K82OT7M)](https://codecov.io/gh/omaralbeik/M3UKit)
@@ -8,6 +8,13 @@ A µ framework for parsing [m3u files](https://en.wikipedia.org/wiki/M3U).
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FM3UKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/omaralbeik/M3UKit)
 
 ---
+
+## Features
+
+- [x] Parse playlists from a `String`, local file, or any URL.
+- [x] Capable of parsing large playlists with hundreds of thousands of media items.
+- [x] Sync/Async parsing.
+- [x] Season/Episode number extraction for TV show media items.
 
 ## Usage
 
@@ -71,11 +78,11 @@ M3U exposes one model; `Playlist`, with the following schema:
 
 ```
 Playlist
-└── channels
+└── medias
 ```
 
 ```
-Channel
+Media
 ├── duration
 ├── attributes
 ├── name
@@ -91,7 +98,9 @@ Attributes
 ├── logo (tvg-logo)
 ├── channelNumber (tvg-chno)
 ├── shift (tvg-shift)
-└── groupTitle (group-title)
+├── groupTitle (group-title)
+├── seasonNumber
+└── episodeNumber
 ```
 
 ---
@@ -106,7 +115,7 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for ma
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.5.2")
+    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.6.0")
 ]
 ```
 
@@ -121,7 +130,7 @@ $ swift build
 To integrate M3UKit into your Xcode project using [CocoaPods](https://cocoapods.org), specify it in your Podfile:
 
 ```rb
-pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.5.2'
+pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.6.0'
 ```
 
 ### Carthage
@@ -129,7 +138,7 @@ pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.5.2
 To integrate M3UKit into your Xcode project using [Carthage](https://github.com/Carthage/Carthage), specify it in your Cartfile:
 
 ```
-github "omaralbeik/M3UKit" ~> 0.5.2
+github "omaralbeik/M3UKit" ~> 0.6.0
 ```
 
 ### Manually

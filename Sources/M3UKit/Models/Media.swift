@@ -21,14 +21,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// Object representing a playlist containing media items.
-public struct Playlist: Equatable, Hashable, Codable {
-  /// Create a playlist.
-  /// - Parameter medias: medias.
-  public init(medias: [Media]) {
-    self.medias = medias
-  }
+import Foundation
 
-  /// Medias.
-  public var medias: [Media]
+extension Playlist {
+  /// Object representing a media.
+  public struct Media: Equatable, Hashable, Codable {
+    typealias Metadata = (
+      duration: Int,
+      attributes: Attributes,
+      name: String
+    )
+
+    init(metadata: Metadata, url: URL) {
+      self.init(
+        duration: metadata.duration,
+        attributes: metadata.attributes,
+        name: metadata.name,
+        url: url
+      )
+    }
+
+    /// Create a new media object.
+    /// - Parameters:
+    ///   - duration: duration.
+    ///   - attributes: attributes.
+    ///   - name: name.
+    ///   - url: url.
+    public init(
+      duration: Int,
+      attributes: Attributes,
+      name: String,
+      url: URL
+    ) {
+      self.duration = duration
+      self.attributes = attributes
+      self.name = name
+      self.url = url
+    }
+
+    /// Duration, Usually -1 for live stream content.
+    public var duration: Int
+
+    /// Attributes.
+    public var attributes: Attributes
+
+    /// Media name.
+    public var name: String
+
+    /// Media URL.
+    public var url: URL
+  }
 }

@@ -24,45 +24,45 @@
 import XCTest
 @testable import M3UKit
 
-final class ChannelTests: XCTestCase {
+final class MediaTests: XCTestCase {
   func testInit() {
     let duration = 0
-    let attributes = Playlist.Channel.Attributes()
+    let attributes = Playlist.Media.Attributes()
     let name = "name"
     let url = URL(string: "https://not.a/real/url")!
     
-    let channel = Playlist.Channel(
+    let media = Playlist.Media(
       duration: duration,
       attributes: attributes,
       name: name,
       url: url
     )
     
-    XCTAssertEqual(channel.duration, duration)
-    XCTAssertEqual(channel.attributes, attributes)
-    XCTAssertEqual(channel.name, name)
-    XCTAssertEqual(channel.url, url)
+    XCTAssertEqual(media.duration, duration)
+    XCTAssertEqual(media.attributes, attributes)
+    XCTAssertEqual(media.name, name)
+    XCTAssertEqual(media.url, url)
   }
 
   func testExtractingDuration() throws {
-    let parser = ChannelMetadataParser()
+    let parser = MediaMetadataParser()
     XCTAssertThrowsError(try parser.extractDuration((1, "invalid")))
   }
   
   func testExtractingName() throws {
-    let parser = ChannelMetadataParser()
+    let parser = MediaMetadataParser()
     XCTAssertEqual(parser.extractName("invalid"), "")
     XCTAssertEqual(parser.extractName(",valid"), "valid")
   }
 
   func testIsInfoLine() {
-    let parser = ChannelMetadataParser()
+    let parser = MediaMetadataParser()
     XCTAssertTrue(parser.isInfoLine("#EXTINF:-1 tvg-id="))
     XCTAssertFalse(parser.isInfoLine("#EXTVLCOPT:http-user-agent"))
   }
 
   func testErrorDescription() {
-    let error = ChannelMetadataParser.ParsingError.missingDuration(3, "invalid line")
+    let error = MediaMetadataParser.ParsingError.missingDuration(3, "invalid line")
     XCTAssertEqual(
       error.errorDescription,
       "Line 3: Missing duration in line \"invalid line\""
