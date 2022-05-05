@@ -24,7 +24,7 @@
 import XCTest
 @testable import M3UKit
 
-final class ChannelAttributesTests: XCTestCase {
+final class MediaAttributesTests: XCTestCase {
   func testInit() {
     let id = "id"
     let name = "name"
@@ -34,8 +34,10 @@ final class ChannelAttributesTests: XCTestCase {
     let channelNumber = "channelNumber"
     let shift = "shift"
     let groupTitle = "groupTitle"
+    let seasonNumber = 1
+    let episodeNumber = 5
 
-    let attributes = Playlist.Channel.Attributes(
+    let attributes = Playlist.Media.Attributes(
       id: id,
       name: name,
       country: country,
@@ -43,7 +45,9 @@ final class ChannelAttributesTests: XCTestCase {
       logo: logo,
       channelNumber: channelNumber,
       shift: shift,
-      groupTitle: groupTitle
+      groupTitle: groupTitle,
+      seasonNumber: seasonNumber,
+      episodeNumber: episodeNumber
     )
 
     XCTAssertEqual(attributes.id, id)
@@ -54,15 +58,17 @@ final class ChannelAttributesTests: XCTestCase {
     XCTAssertEqual(attributes.channelNumber, channelNumber)
     XCTAssertEqual(attributes.shift, shift)
     XCTAssertEqual(attributes.groupTitle, groupTitle)
+    XCTAssertEqual(attributes.seasonNumber, seasonNumber)
+    XCTAssertEqual(attributes.episodeNumber, episodeNumber)
   }
 
   func testParsing() throws {
-    let rawChannel = """
+    let rawMedia = """
 #EXTINF:-1 tvg-name="DWEnglish.de" tvg-id="DWEnglish.de" tvg-country="INT" tvg-language="English" tvg-logo="https://i.imgur.com/A1xzjOI.png" tvg-chno="1" tvg-shift="0" group-title="News",DW English (1080p)
 https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
 """
-    let parser = ChannelAttributesParser()
-    let attributes = try parser.parse(rawChannel)
+    let parser = MediaAttributesParser()
+    let attributes = try parser.parse(rawMedia)
     XCTAssertEqual(attributes.name, "DWEnglish.de")
     XCTAssertEqual(attributes.id, "DWEnglish.de")
     XCTAssertEqual(attributes.country, "INT")
@@ -71,5 +77,14 @@ https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
     XCTAssertEqual(attributes.channelNumber, "1")
     XCTAssertEqual(attributes.shift, "0")
     XCTAssertEqual(attributes.groupTitle, "News")
+  }
+
+  func testSeasonEpisodeParsing() throws {
+    let parser = SeasonEpisodeParser()
+    let input = "Kyou Kara Ore Wa!! LIVE ACTION S01 E09"
+    let output = try parser.parse(input)
+    XCTAssertEqual(output.name, "Kyou Kara Ore Wa!! LIVE ACTION")
+    XCTAssertEqual(output.se?.s, 1)
+    XCTAssertEqual(output.se?.e, 9)
   }
 }

@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-final class ChannelAttributesParser: Parser {
-  typealias Attributes = Playlist.Channel.Attributes
+final class MediaAttributesParser: Parser {
+  typealias Attributes = Playlist.Media.Attributes
 
   func parse(_ input: String) throws -> Attributes {
     var attributes = Attributes()
@@ -30,7 +30,10 @@ final class ChannelAttributesParser: Parser {
       attributes.id = id
     }
     if let name = nameRegex.firstMatch(in: input) {
-      attributes.name = name
+      let show = try seasonEpisodeParser.parse(name)
+      attributes.name = show.name
+      attributes.seasonNumber = show.se?.s
+      attributes.episodeNumber = show.se?.e
     }
     if let country = countryRegex.firstMatch(in: input) {
       attributes.country = country
@@ -53,6 +56,7 @@ final class ChannelAttributesParser: Parser {
     return attributes
   }
 
+  let seasonEpisodeParser = SeasonEpisodeParser()
   let idRegex: RegularExpression = #"tvg-id=\"(.?|.+?)\""#
   let nameRegex: RegularExpression = #"tvg-name=\"(.?|.+?)\""#
   let countryRegex: RegularExpression = #"tvg-country=\"(.?|.+?)\""#

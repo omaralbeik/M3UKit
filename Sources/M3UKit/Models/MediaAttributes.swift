@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-extension Playlist.Channel {
-  /// Object representing attributes for a channel.
+extension Playlist.Media {
+  /// Object representing attributes for a media.
   public struct Attributes: Equatable, Hashable, Codable {
-    /// Create a new channel.
+    /// Create a new attributes object.
     /// - Parameters:
     ///   - id: id.
     ///   - name: name.
@@ -34,6 +34,8 @@ extension Playlist.Channel {
     ///   - channelNumber: channel number.
     ///   - shift: shift.
     ///   - groupTitle: group title.
+    ///   - seasonNumber: Season number (for TV shows).
+    ///   - episodeNumber: Episode number (for TV shows).
     public init(
       id: String? = nil,
       name: String? = nil,
@@ -42,7 +44,9 @@ extension Playlist.Channel {
       logo: String? = nil,
       channelNumber: String? = nil,
       shift: String? = nil,
-      groupTitle: String? = nil
+      groupTitle: String? = nil,
+      seasonNumber: Int? = nil,
+      episodeNumber: Int? = nil
     ) {
       self.id = id
       self.name = name
@@ -52,6 +56,8 @@ extension Playlist.Channel {
       self.channelNumber = channelNumber
       self.shift = shift
       self.groupTitle = groupTitle
+      self.seasonNumber = seasonNumber
+      self.episodeNumber = episodeNumber
     }
 
     /// tvg-id.
@@ -77,5 +83,11 @@ extension Playlist.Channel {
 
     /// group-title.
     public var groupTitle: String?
+
+    /// Season number (for TV shows).
+    public var seasonNumber: Int?
+
+    /// Episode number (for TV shows).
+    public var episodeNumber: Int?
   }
 }

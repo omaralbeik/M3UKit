@@ -40,6 +40,20 @@ struct RegularExpression {
     }
     return String(source[range])
   }
+
+  func matchingRanges(in source: String) -> [Range<String.Index>] {
+    let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
+    guard let match = regex.firstMatch(in: source, range: sourceRange) else {
+      return []
+    }
+    return (0..<match.numberOfRanges)
+      .compactMap {
+        match.range(at: $0)
+      }
+      .compactMap {
+        Range($0, in: source)
+      }
+  }
 }
 
 extension RegularExpression: ExpressibleByStringLiteral {

@@ -42,12 +42,12 @@ public final class PlaylistParser: Parser {
   public func parse(_ input: PlaylistSource) throws -> Playlist {
     let rawString = try extractRawString(from: input)
 
-    var channels: [Playlist.Channel] = []
+    var medias: [Playlist.Media] = []
 
-    let metadataParser = ChannelMetadataParser()
+    let metadataParser = MediaMetadataParser()
     var lastMetadataLine: String?
     var lastURL: URL?
-    var channelMetadataParsingError: Error?
+    var mediaMetadataParsingError: Error?
     var lineNumber = 0
 
     rawString.enumerateLines { line, stop in
@@ -60,11 +60,11 @@ public final class PlaylistParser: Parser {
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
           let metadata = try metadataParser.parse((lineNumber, metadataLine))
-          channels.append(.init(metadata: metadata, url: url))
+          medias.append(.init(metadata: metadata, url: url))
           lastMetadataLine = nil
           lastURL = nil
         } catch {
-          channelMetadataParsingError = error
+          mediaMetadataParsingError = error
           stop = true
         }
       }
@@ -72,27 +72,27 @@ public final class PlaylistParser: Parser {
       lineNumber += 1
     }
 
-    if let error = channelMetadataParsingError {
+    if let error = mediaMetadataParsingError {
       throw error
     }
 
-    return Playlist(channels: channels)
+    return Playlist(medias: medias)
   }
 
-  /// Walk over a playlist and return its channels one-by-one.
+  /// Walk over a playlist and return its medias one-by-one.
   /// - Parameters:
   ///   - input: source.
-  ///   - handler: Handler to be called with the parsed channel.
+  ///   - handler: Handler to be called with the parsed medias.
   public func walk(
     _ input: PlaylistSource,
-    handler: @escaping (Playlist.Channel) -> Void
+    handler: @escaping (Playlist.Media) -> Void
   ) throws {
     let rawString = try extractRawString(from: input)
 
-    let metadataParser = ChannelMetadataParser()
+    let metadataParser = MediaMetadataParser()
     var lastMetadataLine: String?
     var lastURL: URL?
-    var channelMetadataParsingError: Error?
+    var mediaMetadataParsingError: Error?
     var lineNumber = 0
 
     rawString.enumerateLines { line, stop in
@@ -109,14 +109,14 @@ public final class PlaylistParser: Parser {
           lastMetadataLine = nil
           lastURL = nil
         } catch {
-          channelMetadataParsingError = error
+          mediaMetadataParsingError = error
           stop = true
         }
       }
       lineNumber += 1
     }
 
-    if let error = channelMetadataParsingError {
+    if let error = mediaMetadataParsingError {
       throw error
     }
   }

@@ -21,54 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+final class SeasonEpisodeParser: Parser {
+  typealias Show = (name: String, se: (s: Int, e: Int)?)
 
-extension Playlist {
-  /// Object representing a TV channel.
-  public struct Channel: Equatable, Hashable, Codable {
-    typealias Metadata = (
-      duration: Int,
-      attributes: Attributes,
-      name: String
-    )
-
-    init(metadata: Metadata, url: URL) {
-      self.init(
-        duration: metadata.duration,
-        attributes: metadata.attributes,
-        name: metadata.name,
-        url: url
-      )
+  func parse(_ input: String) throws -> Show {
+    let ranges = seasonEpisodeRegex.matchingRanges(in: input)
+    guard
+      ranges.count == 3,
+      let s = Int(input[ranges[1]]),
+      let e = Int(input[ranges[2]])
+    else {
+      return (name: input, se: nil)
     }
-
-    /// Create a new channel object.
-    /// - Parameters:
-    ///   - duration: duration.
-    ///   - attributes: attributes.
-    ///   - name: name.
-    ///   - url: url.
-    public init(
-      duration: Int,
-      attributes: Attributes,
-      name: String,
-      url: URL
-    ) {
-      self.duration = duration
-      self.attributes = attributes
-      self.name = name
-      self.url = url
-    }
-
-    /// Duration, -1 for live channels.
-    public var duration: Int
-
-    /// Attributes.
-    public var attributes: Attributes
-
-    /// Channel name.
-    public var name: String
-
-    /// Channel URL.
-    public var url: URL
+    var name = input
+    name.removeSubrange(ranges[0])
+    return (name: name, se: (s, e))
   }
+
+  let seasonEpisodeRegex: RegularExpression = #" S(\d+) E(\d+)"#
 }
