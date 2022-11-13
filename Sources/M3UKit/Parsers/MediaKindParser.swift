@@ -21,22 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-final class SeasonEpisodeParser: Parser {
-  typealias Show = (name: String, se: (s: Int, e: Int)?)
+import Foundation
 
-  func parse(_ input: String) -> Show {
-    let ranges = seasonEpisodeRegex.matchingRanges(in: input)
-    guard
-      ranges.count == 3,
-      let s = Int(input[ranges[1]]),
-      let e = Int(input[ranges[2]])
-    else {
-      return (name: input, se: nil)
+final class MediaKindParser: Parser {
+  func parse(_ input: URL) -> Playlist.Media.Kind {
+    let string = input.absoluteString
+    if seriesRegex.numberOfMatches(source: string) == 1 {
+      return .series
     }
-    var name = input
-    name.removeSubrange(ranges[0])
-    return (name: name, se: (s, e))
+    if moviesRegex.numberOfMatches(source: string) == 1 {
+      return .movie
+    }
+    if liveRegex.numberOfMatches(source: string) == 1 {
+      return .live
+    }
+    return .unknown
   }
 
-  let seasonEpisodeRegex: RegularExpression = #" S(\d+) E(\d+)"#
+  let moviesRegex: RegularExpression = #"\/movies\/"#
+  let seriesRegex: RegularExpression = #"\/series\/"#
+  let liveRegex: RegularExpression = #"\/live\/"#
 }

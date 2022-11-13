@@ -21,22 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-final class SeasonEpisodeParser: Parser {
-  typealias Show = (name: String, se: (s: Int, e: Int)?)
+import XCTest
+@testable import M3UKit
 
-  func parse(_ input: String) -> Show {
-    let ranges = seasonEpisodeRegex.matchingRanges(in: input)
-    guard
-      ranges.count == 3,
-      let s = Int(input[ranges[1]]),
-      let e = Int(input[ranges[2]])
-    else {
-      return (name: input, se: nil)
-    }
-    var name = input
-    name.removeSubrange(ranges[0])
-    return (name: name, se: (s, e))
+final class MediaKindTests: XCTestCase {
+  func testParsing() {
+    let parser = MediaKindParser()
+    XCTAssertEqual(parser.parse(URL(string: "test.com/movies/123456")!), .movie)
+    XCTAssertEqual(parser.parse(URL(string: "test.com/live/123456")!), .live)
+    XCTAssertEqual(parser.parse(URL(string: "test.com/series/123456")!), .series)
+    XCTAssertEqual(parser.parse(URL(string: "test.com/123456")!), .unknown)
   }
-
-  let seasonEpisodeRegex: RegularExpression = #" S(\d+) E(\d+)"#
 }

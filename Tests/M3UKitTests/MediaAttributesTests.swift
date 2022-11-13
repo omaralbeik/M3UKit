@@ -62,13 +62,13 @@ final class MediaAttributesTests: XCTestCase {
     XCTAssertEqual(attributes.episodeNumber, episodeNumber)
   }
 
-  func testParsing() throws {
+  func testParsing() {
     let rawMedia = """
 #EXTINF:-1 tvg-name="DWEnglish.de" tvg-id="DWEnglish.de" tvg-country="INT" tvg-language="English" tvg-logo="https://i.imgur.com/A1xzjOI.png" tvg-chno="1" tvg-shift="0" group-title="News",DW English (1080p)
 https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
 """
     let parser = MediaAttributesParser()
-    let attributes = try parser.parse(rawMedia)
+    let attributes = parser.parse(rawMedia)
     XCTAssertEqual(attributes.name, "DWEnglish.de")
     XCTAssertEqual(attributes.id, "DWEnglish.de")
     XCTAssertEqual(attributes.country, "INT")
@@ -79,10 +79,10 @@ https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
     XCTAssertEqual(attributes.groupTitle, "News")
   }
 
-  func testSeasonEpisodeParsing() throws {
+  func testSeasonEpisodeParsing() {
     let parser = SeasonEpisodeParser()
     let input = "Kyou Kara Ore Wa!! LIVE ACTION S01 E09"
-    let output = try parser.parse(input)
+    let output = parser.parse(input)
     XCTAssertEqual(output.name, "Kyou Kara Ore Wa!! LIVE ACTION")
     XCTAssertEqual(output.se?.s, 1)
     XCTAssertEqual(output.se?.e, 9)

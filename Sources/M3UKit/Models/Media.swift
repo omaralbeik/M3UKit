@@ -32,10 +32,15 @@ extension Playlist {
       name: String
     )
 
-    init(metadata: Metadata, url: URL) {
+    init(
+      metadata: Metadata,
+      kind: Kind,
+      url: URL
+    ) {
       self.init(
         duration: metadata.duration,
         attributes: metadata.attributes,
+        kind: kind,
         name: metadata.name,
         url: url
       )
@@ -45,16 +50,19 @@ extension Playlist {
     /// - Parameters:
     ///   - duration: duration.
     ///   - attributes: attributes.
+    ///   - kind: kind.
     ///   - name: name.
     ///   - url: url.
     public init(
       duration: Int,
       attributes: Attributes,
+      kind: Kind,
       name: String,
       url: URL
     ) {
       self.duration = duration
       self.attributes = attributes
+      self.kind = kind
       self.name = name
       self.url = url
     }
@@ -64,6 +72,9 @@ extension Playlist {
 
     /// Attributes.
     public var attributes: Attributes
+
+    /// Kind.
+    public var kind: Kind
 
     /// Media name.
     public var name: String
