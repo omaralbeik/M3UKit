@@ -25,7 +25,7 @@ import Foundation
 
 extension Playlist.Media {
   /// Enum representing media kind.
-  public enum Kind: Equatable, Hashable, Codable {
+  public enum Kind: String, Equatable, Hashable, Codable {
     case movie
     case series
     case live
