@@ -29,11 +29,13 @@ final class MediaTests: XCTestCase {
     let duration = 0
     let attributes = Playlist.Media.Attributes()
     let name = "name"
+    let kind = Playlist.Media.Kind.live
     let url = URL(string: "https://not.a/real/url")!
     
     let media = Playlist.Media(
       duration: duration,
       attributes: attributes,
+      kind: kind,
       name: name,
       url: url
     )
@@ -41,6 +43,7 @@ final class MediaTests: XCTestCase {
     XCTAssertEqual(media.duration, duration)
     XCTAssertEqual(media.attributes, attributes)
     XCTAssertEqual(media.name, name)
+    XCTAssertEqual(media.kind, kind)
     XCTAssertEqual(media.url, url)
   }
 

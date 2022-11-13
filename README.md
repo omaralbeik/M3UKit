@@ -15,6 +15,7 @@ Modern framework for parsing [m3u](https://en.wikipedia.org/wiki/M3U) files.
 - [x] Capable of parsing large playlists with hundreds of thousands of media items.
 - [x] Sync/Async parsing.
 - [x] Season/Episode number extraction for TV show media items.
+- [x] Media kind extraction from URL path.
 
 ## Usage
 
@@ -85,6 +86,7 @@ Playlist
 Media
 ├── duration
 ├── attributes
+├── kind
 ├── name
 └── url
 ```
@@ -103,6 +105,14 @@ Attributes
 └── episodeNumber
 ```
 
+```
+Kind
+├── movie
+├── series
+├── live
+└── unknown
+```
+
 ---
 
 ## Installation
@@ -115,7 +125,7 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for ma
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.6.0")
+    .package(url: "https://github.com/omaralbeik/M3UKit.git", from: "0.7.0")
 ]
 ```
 
@@ -130,7 +140,7 @@ $ swift build
 To integrate M3UKit into your Xcode project using [CocoaPods](https://cocoapods.org), specify it in your Podfile:
 
 ```rb
-pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.6.0'
+pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.7.0'
 ```
 
 ### Carthage
@@ -138,7 +148,7 @@ pod 'M3UKit', :git => 'https://github.com/omaralbeik/M3UKit.git', :tag => '0.6.0
 To integrate M3UKit into your Xcode project using [Carthage](https://github.com/Carthage/Carthage), specify it in your Cartfile:
 
 ```
-github "omaralbeik/M3UKit" ~> 0.6.0
+github "omaralbeik/M3UKit" ~> 0.7.0
 ```
 
 ### Manually

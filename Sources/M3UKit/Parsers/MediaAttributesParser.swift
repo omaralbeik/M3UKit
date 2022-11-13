@@ -24,13 +24,13 @@
 final class MediaAttributesParser: Parser {
   typealias Attributes = Playlist.Media.Attributes
 
-  func parse(_ input: String) throws -> Attributes {
+  func parse(_ input: String) -> Attributes {
     var attributes = Attributes()
     if let id = idRegex.firstMatch(in: input) {
       attributes.id = id
     }
     if let name = nameRegex.firstMatch(in: input) {
-      let show = try seasonEpisodeParser.parse(name)
+      let show = seasonEpisodeParser.parse(name)
       attributes.name = show.name
       attributes.seasonNumber = show.se?.s
       attributes.episodeNumber = show.se?.e

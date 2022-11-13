@@ -30,6 +30,11 @@ struct RegularExpression {
     self.regex = regex
   }
 
+  func numberOfMatches(source: String) -> Int {
+    let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
+    return regex.numberOfMatches(in: source, range: sourceRange)
+  }
+
   func firstMatch(in source: String) -> String? {
     let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
     guard

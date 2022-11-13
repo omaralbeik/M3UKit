@@ -45,6 +45,7 @@ public final class PlaylistParser: Parser {
     var medias: [Playlist.Media] = []
 
     let metadataParser = MediaMetadataParser()
+    let kindParser = MediaKindParser()
     var lastMetadataLine: String?
     var lastURL: URL?
     var mediaMetadataParsingError: Error?
@@ -60,7 +61,8 @@ public final class PlaylistParser: Parser {
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
           let metadata = try metadataParser.parse((lineNumber, metadataLine))
-          medias.append(.init(metadata: metadata, url: url))
+          let kind = kindParser.parse(url)
+          medias.append(.init(metadata: metadata, kind: kind, url: url))
           lastMetadataLine = nil
           lastURL = nil
         } catch {
@@ -90,6 +92,7 @@ public final class PlaylistParser: Parser {
     let rawString = try extractRawString(from: input)
 
     let metadataParser = MediaMetadataParser()
+    let kindParser = MediaKindParser()
     var lastMetadataLine: String?
     var lastURL: URL?
     var mediaMetadataParsingError: Error?
@@ -105,7 +108,8 @@ public final class PlaylistParser: Parser {
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
           let metadata = try metadataParser.parse((lineNumber, metadataLine))
-          handler(.init(metadata: metadata, url: url))
+          let kind = kindParser.parse(url)
+          handler(.init(metadata: metadata, kind: kind, url: url))
           lastMetadataLine = nil
           lastURL = nil
         } catch {
