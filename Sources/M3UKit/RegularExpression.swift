@@ -23,19 +23,19 @@
 
 import Foundation
 
-struct RegularExpression {
-  let regex: NSRegularExpression
+internal struct RegularExpression {
+  internal let regex: NSRegularExpression
 
-  init(_ regex: NSRegularExpression) {
+  internal init(_ regex: NSRegularExpression) {
     self.regex = regex
   }
 
-  func numberOfMatches(source: String) -> Int {
+  internal func numberOfMatches(source: String) -> Int {
     let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
     return regex.numberOfMatches(in: source, range: sourceRange)
   }
 
-  func firstMatch(in source: String) -> String? {
+  internal func firstMatch(in source: String) -> String? {
     let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
     guard
       let match = regex.firstMatch(in: source, range: sourceRange),
@@ -46,7 +46,7 @@ struct RegularExpression {
     return String(source[range])
   }
 
-  func matchingRanges(in source: String) -> [Range<String.Index>] {
+  internal func matchingRanges(in source: String) -> [Range<String.Index>] {
     let sourceRange = NSRange(source.startIndex..<source.endIndex, in: source)
     guard let match = regex.firstMatch(in: source, range: sourceRange) else {
       return []
@@ -62,7 +62,7 @@ struct RegularExpression {
 }
 
 extension RegularExpression: ExpressibleByStringLiteral {
-  init(stringLiteral value: String) {
+  internal init(stringLiteral value: String) {
     let regex = try! NSRegularExpression(pattern: value, options: [])
     self.init(regex)
   }

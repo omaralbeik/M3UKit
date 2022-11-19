@@ -26,103 +26,58 @@ import XCTest
 
 final class PlaylistTests: XCTestCase {
   func testInit() {
-    XCTAssert(Playlist(medias: []).medias.isEmpty)
+    let id = "id"
+    let name = "name"
+    let country = "country"
+    let language = "language"
+    let logo = "logo"
+    let channelNumber = "channelNumber"
+    let shift = "shift"
+    let groupTitle = "groupTitle"
+    let seasonNumber = 1
+    let episodeNumber = 5
+
+    let attributes = Playlist.Media.Attributes(
+      id: id,
+      name: name,
+      country: country,
+      language: language,
+      logo: logo,
+      channelNumber: channelNumber,
+      shift: shift,
+      groupTitle: groupTitle,
+      seasonNumber: seasonNumber,
+      episodeNumber: episodeNumber
+    )
+
+    let duration = 0
+    let kind = Playlist.Media.Kind.live
+    let url = URL(string: "https://not.a/real/url")!
+
+    let media = Playlist.Media(
+      duration: duration,
+      attributes: attributes,
+      kind: kind,
+      name: name,
+      url: url
+    )
+
+    XCTAssertEqual(media.duration, duration)
+    XCTAssertEqual(media.attributes, attributes)
+    XCTAssertEqual(media.name, name)
+    XCTAssertEqual(media.kind, kind)
+    XCTAssertEqual(media.url, url)
+    XCTAssertEqual(media.attributes.id, id)
+    XCTAssertEqual(media.attributes.name, name)
+    XCTAssertEqual(media.attributes.country, country)
+    XCTAssertEqual(media.attributes.language, language)
+    XCTAssertEqual(media.attributes.logo, logo)
+    XCTAssertEqual(media.attributes.channelNumber, channelNumber)
+    XCTAssertEqual(media.attributes.shift, shift)
+    XCTAssertEqual(media.attributes.groupTitle, groupTitle)
+    XCTAssertEqual(media.attributes.seasonNumber, seasonNumber)
+    XCTAssertEqual(media.attributes.episodeNumber, episodeNumber)
+
+    XCTAssertEqual(Playlist(medias: [media]).medias, [media])
   }
-
-  func testParsing() throws {
-    let parser = PlaylistParser()
-
-    let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
-    let playlist = try parser.parse(validURL)
-    XCTAssertEqual(playlist.medias.count, 106)
-    XCTAssertEqual(playlist.medias[0].name, "TV SHOW")
-    XCTAssertEqual(playlist.medias[0].attributes.name, "TV SHOW")
-    XCTAssertEqual(playlist.medias[0].attributes.seasonNumber, 1)
-    XCTAssertEqual(playlist.medias[0].attributes.episodeNumber, 1)
-
-    let invalidURL = Bundle.module.url(forResource: "invalid", withExtension: "m3u")!
-    XCTAssertThrowsError(try parser.parse(invalidURL))
-    XCTAssertThrowsError(try parser.parse(""))
-    XCTAssertThrowsError(try parser.parse(InvalidSource()))
-  }
-
-	func testWalking() throws {
-		let parser = PlaylistParser()
-		var medias: [Playlist.Media] = []
-
-		let exp = expectation(description: "Walking succeeded")
-		let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
-		try parser.walk(validURL) { media in
-			medias.append(media)
-			if medias.count == 105 {
-				exp.fulfill()
-			}
-		}
-
-		waitForExpectations(timeout: 1)
-		XCTAssertEqual(medias.count, 106)
-	}
-
-	func testWalkingInvalidSource() {
-		let parser = PlaylistParser()
-		XCTAssertThrowsError(try parser.walk("") { _ in })
-
-		let invalidURL = Bundle.module.url(forResource: "invalid", withExtension: "m3u")!
-		XCTAssertThrowsError(try parser.walk(invalidURL) { _ in })
-	}
-
-
-  func testErrorDescription() {
-    let error = PlaylistParser.ParsingError.invalidSource
-    XCTAssertEqual(error.errorDescription, "The playlist is invalid")
-  }
-
-  func testParsingValidSourceWithACallback() {
-    let parser = PlaylistParser()
-    var medias: [Playlist.Media] = []
-
-    let exp = expectation(description: "Parsing succeeded")
-    let validURL = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
-    parser.parse(validURL) { result in
-      switch result {
-      case .success(let playlist):
-        medias = playlist.medias
-        exp.fulfill()
-      case .failure:
-        break
-      }
-    }
-
-    waitForExpectations(timeout: 0.5)
-    XCTAssertEqual(medias.count, 106)
-  }
-
-  func testParsingInvalidSourceWithACallback() {
-    let parser = PlaylistParser()
-    let exp = expectation(description: "Parsing failed")
-
-    parser.parse("") { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        exp.fulfill()
-      }
-    }
-
-    waitForExpectations(timeout: 0.5)
-  }
-
-  @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
-  func testAsyncAwaitParsing() async throws {
-    let parser = PlaylistParser()
-
-    let url = Bundle.module.url(forResource: "valid", withExtension: "m3u")!
-    let playlist = try await parser.parse(url)
-    XCTAssertEqual(playlist.medias.count, 106)
-  }
-}
-
-private struct InvalidSource: PlaylistSource {
-  var rawString: String? { nil }
 }
