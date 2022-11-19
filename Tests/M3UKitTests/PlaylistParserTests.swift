@@ -128,7 +128,7 @@ final class PlaylistParserTests: XCTestCase {
   func testExtractingDuration() throws {
     let parser = PlaylistParser()
 
-    XCTAssertThrowsError(try parser.extractDuration((1, "invalid")))
+    XCTAssertThrowsError(try parser.extractDuration(line: 1, rawString: "invalid"))
   }
 
   func testExtractingName() throws {
@@ -136,6 +136,13 @@ final class PlaylistParserTests: XCTestCase {
 
     XCTAssertEqual(parser.extractName("invalid"), "")
     XCTAssertEqual(parser.extractName(",valid"), "valid")
+  }
+
+  func testExtractingIdFromURL() {
+    let parser = PlaylistParser()
+
+    let url = URL(string: "https://domain.com/live/username/password/123456.mp4")!
+    XCTAssertEqual(parser.extractId(url), "123456")
   }
 
   func testIsInfoLine() {
@@ -148,10 +155,10 @@ final class PlaylistParserTests: XCTestCase {
   func testParsingAttributes() {
     let rawMedia = """
 #EXTINF:-1 tvg-name="DWEnglish.de" tvg-id="DWEnglish.de" tvg-country="INT" tvg-language="English" tvg-logo="https://i.imgur.com/A1xzjOI.png" tvg-chno="1" tvg-shift="0" group-title="News",DW English (1080p)
-https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
 """
-    let parser = PlaylistParser()
-    let attributes = parser.parseAttributes(rawMedia)
+    let url = URL(string: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8")!
+    let parser = PlaylistParser(options: .extractIdFromURL)
+    let attributes = parser.parseAttributes(rawString: rawMedia, url: url)
     XCTAssertEqual(attributes.name, "DWEnglish.de")
     XCTAssertEqual(attributes.id, "DWEnglish.de")
     XCTAssertEqual(attributes.country, "INT")
@@ -161,6 +168,24 @@ https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
     XCTAssertEqual(attributes.shift, "0")
     XCTAssertEqual(attributes.groupTitle, "News")
   }
+
+  func testParsingAttributesWithOverridingId() {
+    let rawMedia = """
+#EXTINF:-1 tvg-name="DWEnglish.de" tvg-id="" tvg-country="INT" tvg-language="English" tvg-logo="https://i.imgur.com/A1xzjOI.png" tvg-chno="1" tvg-shift="0" group-title="News",DW English (1080p)
+"""
+    let url = URL(string: "https://domain.com/live/username/password/123456.mp4")!
+    let parser = PlaylistParser(options: .extractIdFromURL)
+    let attributes = parser.parseAttributes(rawString: rawMedia, url: url)
+    XCTAssertEqual(attributes.name, "DWEnglish.de")
+    XCTAssertEqual(attributes.id, "123456")
+    XCTAssertEqual(attributes.country, "INT")
+    XCTAssertEqual(attributes.language, "English")
+    XCTAssertEqual(attributes.logo, "https://i.imgur.com/A1xzjOI.png")
+    XCTAssertEqual(attributes.channelNumber, "1")
+    XCTAssertEqual(attributes.shift, "0")
+    XCTAssertEqual(attributes.groupTitle, "News")
+  }
+
 
   func testSeasonEpisodeParsing() {
     let parser = PlaylistParser()
