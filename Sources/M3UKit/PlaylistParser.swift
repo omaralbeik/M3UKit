@@ -37,8 +37,14 @@ public final class PlaylistParser {
     /// Remove season number and episode number "S--E--" from the name of media.
     public static let removeSeriesInfoFromText = Options(rawValue: 1 << 0)
 
+    /// Extract id from the URL (usually last path component removing the extension)
+    public static let extractIdFromURL = Options(rawValue: 1 << 1)
+
     /// All available options.
-    public static let all: Options = [.removeSeriesInfoFromText]
+    public static let all: Options = [
+      .removeSeriesInfoFromText,
+      .extractIdFromURL,
+    ]
   }
 
   /// Parser options.
@@ -77,7 +83,7 @@ public final class PlaylistParser {
 
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
-          let metadata = try self.parseMetadata((lineNumber, metadataLine))
+          let metadata = try self.parseMetadata(line: lineNumber, rawString: metadataLine, url: url)
           let kind = self.parseMediaKind(url)
           medias.append(.init(metadata: metadata, kind: kind, url: url))
           lastMetadataLine = nil
@@ -127,7 +133,7 @@ public final class PlaylistParser {
 
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
-          let metadata = try self.parseMetadata((lineNumber, metadataLine))
+          let metadata = try self.parseMetadata(line: lineNumber, rawString: metadataLine, url: url)
           let kind = self.parseMediaKind(url)
           handler(.init(metadata: metadata, kind: kind, url: url))
           lastMetadataLine = nil
@@ -216,10 +222,10 @@ public final class PlaylistParser {
 
   internal typealias Show = (name: String, se: (s: Int, e: Int)?)
 
-  internal func parseMetadata(_ input: (line: Int, rawString: String)) throws -> Playlist.Media.Metadata {
-    let duration = try extractDuration(input)
-    let attributes = parseAttributes(input.rawString)
-    let name = parseSeasonEpisode(extractName(input.rawString)).name
+  internal func parseMetadata(line: Int, rawString: String, url: URL) throws -> Playlist.Media.Metadata {
+    let duration = try extractDuration(line: line, rawString: rawString)
+    let attributes = parseAttributes(rawString: rawString, url: url)
+    let name = parseSeasonEpisode(extractName(rawString)).name
     return (duration, attributes, name)
   }
 
@@ -227,18 +233,22 @@ public final class PlaylistParser {
     return input.starts(with: "#EXTINF:")
   }
 
-  internal func extractDuration(_ input: (line: Int, rawString: String)) throws -> Int {
+  internal func extractDuration(line: Int, rawString: String) throws -> Int {
     guard
-      let match = durationRegex.firstMatch(in: input.rawString),
+      let match = durationRegex.firstMatch(in: rawString),
       let duration = Int(match)
     else {
-      throw ParsingError.missingDuration(input.line, input.rawString)
+      throw ParsingError.missingDuration(line, rawString)
     }
     return duration
   }
 
   internal func extractName(_ input: String) -> String {
     return nameRegex.firstMatch(in: input) ?? ""
+  }
+
+  internal func extractId(_ input: URL) -> String {
+    String(input.lastPathComponent.split(separator: ".").first ?? "")
   }
 
   internal func parseMediaKind(_ input: URL) -> Playlist.Media.Kind {
@@ -255,33 +265,35 @@ public final class PlaylistParser {
     return .unknown
   }
 
-  internal func parseAttributes(_ input: String) -> Playlist.Media.Attributes {
+  internal func parseAttributes(rawString: String, url: URL) -> Playlist.Media.Attributes {
     var attributes = Playlist.Media.Attributes()
-    if let id = attributesIdRegex.firstMatch(in: input) {
-      attributes.id = id
+    let id = attributesIdRegex.firstMatch(in: rawString) ?? ""
+    attributes.id = id
+    if id.isEmpty && options.contains(.extractIdFromURL) {
+      attributes.id = extractId(url)
     }
-    if let name = attributesNameRegex.firstMatch(in: input) {
+    if let name = attributesNameRegex.firstMatch(in: rawString) {
       let show = parseSeasonEpisode(name)
       attributes.name = show.name
       attributes.seasonNumber = show.se?.s
       attributes.episodeNumber = show.se?.e
     }
-    if let country = attributesCountryRegex.firstMatch(in: input) {
+    if let country = attributesCountryRegex.firstMatch(in: rawString) {
       attributes.country = country
     }
-    if let language = attributesLanguageRegex.firstMatch(in: input) {
+    if let language = attributesLanguageRegex.firstMatch(in: rawString) {
       attributes.language = language
     }
-    if let logo = attributesLogoRegex.firstMatch(in: input) {
+    if let logo = attributesLogoRegex.firstMatch(in: rawString) {
       attributes.logo = logo
     }
-    if let channelNumber = attributesChannelNumberRegex.firstMatch(in: input) {
+    if let channelNumber = attributesChannelNumberRegex.firstMatch(in: rawString) {
       attributes.channelNumber = channelNumber
     }
-    if let shift = attributesShiftRegex.firstMatch(in: input) {
+    if let shift = attributesShiftRegex.firstMatch(in: rawString) {
       attributes.shift = shift
     }
-    if let groupTitle = attributesGroupTitleRegex.firstMatch(in: input) {
+    if let groupTitle = attributesGroupTitleRegex.firstMatch(in: rawString) {
       attributes.groupTitle = groupTitle
     }
     return attributes
