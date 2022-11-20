@@ -320,7 +320,7 @@ public final class PlaylistParser {
   internal let durationRegex: RegularExpression = #"#EXTINF:(\-*\d+)"#
   internal let nameRegex: RegularExpression = #".*,(.+?)$"#
 
-  internal let mediaKindMoviesRegex: RegularExpression = #"\/movies?\/"#
+  internal let mediaKindMoviesRegex: RegularExpression = #"\/movie\/"#
   internal let mediaKindSeriesRegex: RegularExpression = #"\/series\/"#
   internal let mediaKindLiveRegex: RegularExpression = #"\/live\/"#
 
