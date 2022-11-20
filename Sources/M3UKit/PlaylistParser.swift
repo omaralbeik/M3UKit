@@ -253,13 +253,13 @@ public final class PlaylistParser {
 
   internal func parseMediaKind(_ input: URL) -> Playlist.Media.Kind {
     let string = input.absoluteString
-    if mediaKindMSeriesRegex.numberOfMatches(source: string) == 1 {
+    if mediaKindSeriesRegex.numberOfMatches(source: string) == 1 {
       return .series
     }
     if mediaKindMoviesRegex.numberOfMatches(source: string) == 1 {
       return .movie
     }
-    if mediaKindMLiveRegex.numberOfMatches(source: string) == 1 {
+    if mediaKindLiveRegex.numberOfMatches(source: string) == 1 {
       return .live
     }
     return .unknown
@@ -320,9 +320,9 @@ public final class PlaylistParser {
   internal let durationRegex: RegularExpression = #"#EXTINF:(\-*\d+)"#
   internal let nameRegex: RegularExpression = #".*,(.+?)$"#
 
-  internal let mediaKindMoviesRegex: RegularExpression = #"\/movies\/"#
-  internal let mediaKindMSeriesRegex: RegularExpression = #"\/series\/"#
-  internal let mediaKindMLiveRegex: RegularExpression = #"\/live\/"#
+  internal let mediaKindMoviesRegex: RegularExpression = #"\/movies?\/"#
+  internal let mediaKindSeriesRegex: RegularExpression = #"\/series\/"#
+  internal let mediaKindLiveRegex: RegularExpression = #"\/live\/"#
 
   internal let seasonEpisodeRegex: RegularExpression = #" S(\d+) E(\d+)"#
 
