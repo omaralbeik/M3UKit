@@ -119,7 +119,7 @@ final class PlaylistParserTests: XCTestCase {
   func testParsingMediaKind() {
     let parser = PlaylistParser()
 
-    XCTAssertEqual(parser.parseMediaKind(URL(string: "test.com/movies/123456")!), .movie)
+    XCTAssertEqual(parser.parseMediaKind(URL(string: "test.com/movie/123456")!), .movie)
     XCTAssertEqual(parser.parseMediaKind(URL(string: "test.com/live/123456")!), .live)
     XCTAssertEqual(parser.parseMediaKind(URL(string: "test.com/series/123456")!), .series)
     XCTAssertEqual(parser.parseMediaKind(URL(string: "test.com/123456")!), .unknown)
