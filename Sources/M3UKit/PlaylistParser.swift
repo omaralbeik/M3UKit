@@ -127,7 +127,7 @@ public final class PlaylistParser {
 
       if self.isInfoLine(line) {
         lastMetadataLine = line
-      } else if let url = URL(string: line) {
+      } else if let url = URL(string: line), url.scheme != nil, url.host != nil {
         lastURL = url
       }
 
