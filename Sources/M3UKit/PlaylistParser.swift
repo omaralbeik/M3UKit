@@ -84,7 +84,7 @@ public final class PlaylistParser {
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
           let metadata = try self.parseMetadata(line: lineNumber, rawString: metadataLine, url: url)
-          let kind = self.parseMediaKind(url)
+          let kind = self.parseMediaKind(url, metadata)
           medias.append(.init(metadata: metadata, kind: kind, url: url))
           lastMetadataLine = nil
           lastURL = nil
@@ -134,7 +134,7 @@ public final class PlaylistParser {
       if let metadataLine = lastMetadataLine, let url = lastURL {
         do {
           let metadata = try self.parseMetadata(line: lineNumber, rawString: metadataLine, url: url)
-          let kind = self.parseMediaKind(url)
+          let kind = self.parseMediaKind(url, metadata)
           handler(.init(metadata: metadata, kind: kind, url: url))
           lastMetadataLine = nil
           lastURL = nil
@@ -251,15 +251,16 @@ public final class PlaylistParser {
     String(input.lastPathComponent.split(separator: ".").first ?? "")
   }
 
-  internal func parseMediaKind(_ input: URL) -> Playlist.Media.Kind {
+  internal func parseMediaKind(_ input: URL, _ metadata: Playlist.Media.Metadata) -> Playlist.Media.Kind {
     let string = input.absoluteString
-    if mediaKindSeriesRegex.numberOfMatches(source: string) == 1 {
+    if (mediaKindSeriesRegex.numberOfMatches(source: string) == 1) || (metadata.attributes.seasonNumber != nil ||
+    metadata.attributes.episodeNumber != nil) {
       return .series
     }
-    if mediaKindMoviesRegex.numberOfMatches(source: string) == 1 {
+      if (mediaKindMoviesRegex.numberOfMatches(source: string) == 1) || (movieYearRegex.numberOfMatches(source: metadata.name) == 1) {
       return .movie
     }
-    if mediaKindLiveRegex.numberOfMatches(source: string) == 1 {
+    if (mediaKindLiveRegex.numberOfMatches(source: string) == 1) || !(metadata.attributes.id?.isEmpty ?? true) {
       return .live
     }
     return .unknown
@@ -272,7 +273,7 @@ public final class PlaylistParser {
     if id.isEmpty && options.contains(.extractIdFromURL) {
       attributes.id = extractId(url)
     }
-    if let name = attributesNameRegex.firstMatch(in: rawString) {
+    if let name = attributesNameRegex.firstMatch(in: rawString) ?? nameRegex.firstMatch(in: rawString) {
       let show = parseSeasonEpisode(name)
       attributes.name = show.name
       attributes.seasonNumber = show.se?.s
@@ -324,7 +325,8 @@ public final class PlaylistParser {
   internal let mediaKindSeriesRegex: RegularExpression = #"\/series\/"#
   internal let mediaKindLiveRegex: RegularExpression = #"\/live\/"#
 
-  internal let seasonEpisodeRegex: RegularExpression = #" S(\d+) E(\d+)"#
+  internal let seasonEpisodeRegex: RegularExpression = #" S(\d+) *E(\d+)"#
+  internal let movieYearRegex: RegularExpression = #" (\d{4,})$"#
 
   internal let attributesIdRegex: RegularExpression = #"tvg-id=\"(.?|.+?)\""#
   internal let attributesNameRegex: RegularExpression = #"tvg-name=\"(.?|.+?)\""#
