@@ -36,6 +36,7 @@ final class PlaylistParserTests: XCTestCase {
     XCTAssertEqual(playlist.medias[0].attributes.name, "TV SHOW")
     XCTAssertEqual(playlist.medias[0].attributes.seasonNumber, 1)
     XCTAssertEqual(playlist.medias[0].attributes.episodeNumber, 1)
+    XCTAssertEqual(playlist.medias[0].url.absoluteString, "https://cdnuk001.broadcastcdn.net/KUK-BBCNEWSHD/index.m3u8")
 
     let invalidURL = Bundle.module.url(forResource: "invalid", withExtension: "m3u")!
     XCTAssertThrowsError(try parser.parse(invalidURL))
@@ -189,11 +190,29 @@ final class PlaylistParserTests: XCTestCase {
 
   func testSeasonEpisodeParsing() {
     let parser = PlaylistParser()
-    let input = "Kyou Kara Ore Wa!! LIVE ACTION S01 E09"
-    let output = parser.parseSeasonEpisode(input)
-    XCTAssertEqual(output.name, "Kyou Kara Ore Wa!! LIVE ACTION S01 E09")
-    XCTAssertEqual(output.se?.s, 1)
-    XCTAssertEqual(output.se?.e, 9)
+    let input1 = "Kyou Kara Ore Wa!! LIVE ACTION S01 E09"
+    let output1 = parser.parseSeasonEpisode(input1)
+    XCTAssertEqual(output1.name, "Kyou Kara Ore Wa!! LIVE ACTION S01 E09")
+    XCTAssertEqual(output1.se?.s, 1)
+    XCTAssertEqual(output1.se?.e, 9)
+
+    let input2 = "Kyou Kara Ore Wa!! LIVE ACTION S01E09"
+    let output2 = parser.parseSeasonEpisode(input2)
+    XCTAssertEqual(output2.name, "Kyou Kara Ore Wa!! LIVE ACTION S01E09")
+    XCTAssertEqual(output2.se?.s, 1)
+    XCTAssertEqual(output2.se?.e, 9)
+
+    let input3 = "Kyou Kara Ore Wa!! LIVE ACTION s01e09"
+    let output3 = parser.parseSeasonEpisode(input3)
+    XCTAssertEqual(output3.name, "Kyou Kara Ore Wa!! LIVE ACTION s01e09")
+    XCTAssertEqual(output3.se?.s, 1)
+    XCTAssertEqual(output3.se?.e, 9)
+
+    let input4 = "Kyou Kara Ore Wa!! LIVE ACTION s01 e09"
+    let output4 = parser.parseSeasonEpisode(input4)
+    XCTAssertEqual(output4.name, "Kyou Kara Ore Wa!! LIVE ACTION s01 e09")
+    XCTAssertEqual(output4.se?.s, 1)
+    XCTAssertEqual(output4.se?.e, 9)
   }
 
   func testSeasonEpisodeParsingWithNameUpdate() {
