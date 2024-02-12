@@ -77,6 +77,8 @@ public final class PlaylistParser {
 
       if self.isInfoLine(line) {
         lastMetadataLine = line
+      } else if self.isSessionLine(line) {
+        lineNumber += 1
       } else if let url = URL(string: line) {
         lastURL = url
       }
@@ -127,6 +129,8 @@ public final class PlaylistParser {
 
       if self.isInfoLine(line) {
         lastMetadataLine = line
+      } else if self.isSessionLine(line) {
+        lineNumber += 1
       } else if let url = URL(string: line) {
         lastURL = url
       }
@@ -231,6 +235,10 @@ public final class PlaylistParser {
 
   internal func isInfoLine(_ input: String) -> Bool {
     return input.starts(with: "#EXTINF:")
+  }
+
+  internal func isSessionLine(_ input: String) -> Bool {
+      return input.starts(with: "#EXT-X-SESSION-DATA:")
   }
 
   internal func extractDuration(line: Int, rawString: String) throws -> Int {
