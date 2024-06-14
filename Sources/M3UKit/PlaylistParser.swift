@@ -77,6 +77,8 @@ public final class PlaylistParser {
 
       if self.isInfoLine(line) {
         lastMetadataLine = line
+      } else if self.isSessionLine(line) {
+        lineNumber += 1
       } else if let url = URL(string: line) {
         lastURL = url
       }
@@ -127,6 +129,8 @@ public final class PlaylistParser {
 
       if self.isInfoLine(line) {
         lastMetadataLine = line
+      } else if self.isSessionLine(line) {
+        lineNumber += 1
       } else if let url = URL(string: line) {
         lastURL = url
       }
@@ -233,6 +237,10 @@ public final class PlaylistParser {
     return input.starts(with: "#EXTINF:")
   }
 
+  internal func isSessionLine(_ input: String) -> Bool {
+      return input.starts(with: "#EXT-X-SESSION-DATA:")
+  }
+
   internal func extractDuration(line: Int, rawString: String) throws -> Int {
     guard
       let match = durationRegex.firstMatch(in: rawString),
@@ -324,7 +332,7 @@ public final class PlaylistParser {
   internal let mediaKindSeriesRegex: RegularExpression = #"\/series\/"#
   internal let mediaKindLiveRegex: RegularExpression = #"\/live\/"#
 
-  internal let seasonEpisodeRegex: RegularExpression = #" S(\d+) E(\d+)"#
+  internal let seasonEpisodeRegex: RegularExpression = #" (?i)s(\d+) ?(?i)e(\d+)"#
 
   internal let attributesIdRegex: RegularExpression = #"tvg-id=\"(.?|.+?)\""#
   internal let attributesNameRegex: RegularExpression = #"tvg-name=\"(.?|.+?)\""#
